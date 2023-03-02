@@ -78,9 +78,6 @@ export default class LinkRange extends Plugin {
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new LinkRangeSettingTab(this.app, this));
 
-		const pagePreviewPlugin = this.app.internalPlugins.plugins["page-preview"];
-		if (!pagePreviewPlugin.enabled) return;
-
 		const settings = this.settings;
 
 		// on page load, update hrefs to strip off second header to handle clickthrough, and add new range-href field
@@ -99,43 +96,48 @@ export default class LinkRange extends Plugin {
 			});
 		});
 
+		// wait for layout to be ready
+		this.app.workspace.onLayoutReady(() => {
+			const pagePreviewPlugin = this.app.internalPlugins.plugins["page-preview"];
 
-		// intercept page-preview plugin
-		const uninstaller = around(pagePreviewPlugin.instance.constructor.prototype, {
-			onHoverLink(old: Function) {
-				return function (options: { event: MouseEvent }, ...args: unknown[]) {
-					return old.call(this, options, ...args);
-				};
-			},
-			onLinkHover(old: Function) {
-				return function (
-					parent: any,
-					targetEl: HTMLElement,
-					linkText: string,
-					path: string,
-					state: any,
-					...args: unknown[]
-				) {
-					// parse link using the added range-href field
-					const res = checkLink(targetEl, settings, "range-href")
-					if (res !== false) {
-						old.call(this, parent, targetEl, res.note, path, {scroll:res.h1Line}, ...args)
-					} else {
-						old.call(this, parent, targetEl, linkText, path, state, ...args);
-					}
-				};
-			},
-		});
-		this.register(uninstaller);
-	
-		// This will recycle the event handlers so that they pick up the patched onLinkHover method
-		pagePreviewPlugin.disable();
-		pagePreviewPlugin.enable();
-	
-		this.register(function () {
-			if (!pagePreviewPlugin.enabled) return;
+			console.log("LinkRange: Hooking into page-preview onHover calls")
+			// intercept page-preview plugin
+			const uninstaller = around(pagePreviewPlugin.instance.constructor.prototype, {
+				onHoverLink(old: Function) {
+					return function (options: { event: MouseEvent }, ...args: unknown[]) {
+						return old.call(this, options, ...args);
+					};
+				},
+				onLinkHover(old: Function) {
+					return function (
+						parent: any,
+						targetEl: HTMLElement,
+						linkText: string,
+						path: string,
+						state: any,
+						...args: unknown[]
+					) {
+						// parse link using the added range-href field
+						const res = checkLink(targetEl, settings, "range-href")
+						if (res !== false) {
+							old.call(this, parent, targetEl, res.note, path, {scroll:res.h1Line}, ...args)
+						} else {
+							old.call(this, parent, targetEl, linkText, path, state, ...args);
+						}
+					};
+				},
+			});
+			this.register(uninstaller);
+		
+			// This will recycle the event handlers so that they pick up the patched onLinkHover method
 			pagePreviewPlugin.disable();
 			pagePreviewPlugin.enable();
+		
+			this.register(function () {
+				if (!pagePreviewPlugin.enabled) return;
+				pagePreviewPlugin.disable();
+				pagePreviewPlugin.enable();
+			});
 		});
 	}
 
