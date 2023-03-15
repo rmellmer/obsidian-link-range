@@ -3,7 +3,7 @@
 	"name": "Link Range",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "This Obsidian plugin brings ranged wikilink support to the program.",
+	"description": "This Obsidian plugin brings ranged wiki-link support to Obsidian.",
 	"author": "Ryan Mellmer",
 	"authorUrl": "https://ryanmellmer.com",
 	"fundingUrl": "https://ryanmellmer.com",
