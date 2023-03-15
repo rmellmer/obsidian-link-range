@@ -11,7 +11,7 @@ export interface LinkRangeSettings {
 export const DEFAULT_SETTINGS: LinkRangeSettings = {
 	headingSeparator: '..',
 	altFormat: '$note:$h1-$h2',
-	endInclusive: false
+	endInclusive: true
 }
 
 export class LinkRangeSettingTab extends PluginSettingTab {

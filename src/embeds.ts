@@ -6,13 +6,14 @@ export async function replaceEmbed(embed: Node, settings: LinkRangeSettings) {
 	const embedHtml = embed as HTMLElement
 	const res = checkLink(embedHtml, settings, "src");
 
-	if (res !== false) {
+	if (res !== null) {
 		const { vault } = app;
 		const foundNote : TFile | undefined = app.vault.getMarkdownFiles().filter(
 			x => x.basename == res.note
 		).first()
 
 		if (foundNote) {
+			// prevent default embed functionality
 			embedHtml.removeClasses(["internal-embed", "markdown-embed", "inline-embed", "is-loaded"])
 			embedHtml.setText("")
 			embedHtml.removeAttribute("alt")
@@ -21,7 +22,7 @@ export async function replaceEmbed(embed: Node, settings: LinkRangeSettings) {
 				cls: ["internal-embed", "markdown-embed", "inline-embed", "is-loaded"]
 			});
 			childDiv.createEl("h2", {
-				text: res.note
+				text: res.altText
 			})
 			const linkDiv = childDiv.createDiv({
 				cls: ["markdown-embed-link"],
@@ -37,6 +38,8 @@ export async function replaceEmbed(embed: Node, settings: LinkRangeSettings) {
 				},
 				cls: ["svg-icon", "lucide-link"]
 			})
+
+			// manually create link icon svg
 			svg.createSvg("path", {
 				attr: {
 					d: "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"

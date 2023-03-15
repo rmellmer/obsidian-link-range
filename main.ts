@@ -5,7 +5,6 @@ import { DEFAULT_SETTINGS, LinkRangeSettings, LinkRangeSettingTab } from 'src/se
 import { linkRangePostProcessor } from 'src/markdownPostProcessor';
 import { checkLink } from 'src/utils';
 import { LinkRangeView } from 'src/linkRangeView';
-import { Extension } from '@codemirror/state';
 
 export default class LinkRange extends Plugin {
 	settings: LinkRangeSettings;
