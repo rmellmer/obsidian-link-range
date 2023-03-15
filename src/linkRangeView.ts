@@ -14,7 +14,7 @@ export class LinkRangeView implements PluginValue {
 
 	buildDecorations(view: EditorView): DecorationSet {
 		const buffer = new RangeSetBuilder<Decoration>()
-		const embeds = view.contentDOM.querySelectorAll("div.internal-embed");
+		const embeds = view.contentDOM.querySelectorAll("div.markdown-embed");
 
 		embeds.forEach(embed => {
 			replaceEmbed(embed, this.settings)

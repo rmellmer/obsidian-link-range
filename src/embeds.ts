@@ -2,9 +2,9 @@ import { Component, MarkdownRenderer, TFile } from "obsidian";
 import { LinkRangeSettings } from "./settings";
 import { checkLink } from "./utils";
 
-export async function replaceEmbed(embed: Node, settings: LinkRangeSettings) {
-	const embedHtml = embed as HTMLElement
-	const res = checkLink(embedHtml, settings, "src");
+export async function replaceEmbed(embed: Node, settings: LinkRangeSettings, isMarkdownPost = false) {
+	let embedHtml = embed as HTMLElement
+	const res = checkLink(embedHtml, settings, true, "src");
 
 	if (res !== null) {
 		const { vault } = app;
@@ -13,18 +13,23 @@ export async function replaceEmbed(embed: Node, settings: LinkRangeSettings) {
 		).first()
 
 		if (foundNote) {
-			// prevent default embed functionality
-			embedHtml.removeClasses(["internal-embed", "markdown-embed", "inline-embed", "is-loaded"])
+			// empty children
+			embedHtml.replaceChildren("")
 			embedHtml.setText("")
-			embedHtml.removeAttribute("alt")
-			embedHtml.removeAttribute("src")
-			const childDiv = embedHtml.createDiv({
-				cls: ["internal-embed", "markdown-embed", "inline-embed", "is-loaded"]
-			});
-			childDiv.createEl("h2", {
+
+			if (isMarkdownPost) {
+				// prevent default embed functionality for markdown post processor
+				embedHtml.removeClasses(["internal-embed"])
+				embedHtml = embedHtml.createDiv({
+					cls: ["internal-embed", "markdown-embed", "inline-embed", "is-loaded"]
+				})
+			}	
+
+			embedHtml.createEl("h2", {
 				text: res.altText
 			})
-			const linkDiv = childDiv.createDiv({
+
+			const linkDiv = embedHtml.createDiv({
 				cls: ["markdown-embed-link"],
 			});
 			const svg = linkDiv.createSvg("svg", {
@@ -65,7 +70,7 @@ export async function replaceEmbed(embed: Node, settings: LinkRangeSettings) {
 			let lines = fileContent.split("\n");
 			lines = lines.slice(res.h1Line, res.h2Line);
 
-			MarkdownRenderer.renderMarkdown(lines.join("\n"), childDiv, "", new Component)
+			MarkdownRenderer.renderMarkdown(lines.join("\n"), embedHtml, "", new Component)
 		}
 	}				
 }

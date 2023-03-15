@@ -45,7 +45,7 @@ export default class LinkRange extends Plugin {
 						...args: unknown[]
 					) {
 						// parse link using the added range-href field
-						const res = checkLink(targetEl, settings, "range-href")
+						const res = checkLink(targetEl, settings, false, "range-href")
 						if (res !== null) {
 							old.call(this, parent, targetEl, res.note, path, {scroll:res.h1Line}, ...args)
 						} else {

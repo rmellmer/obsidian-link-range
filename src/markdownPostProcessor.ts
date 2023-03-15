@@ -26,6 +26,6 @@ export function linkRangePostProcessor(el: HTMLElement, ctx: MarkdownPostProcess
 	const embeds = el.querySelectorAll('span.internal-embed');
 
 	embeds.forEach(embed => {
-		replaceEmbed(embed, settings)	
+		replaceEmbed(embed, settings, true)	
 	});
 }

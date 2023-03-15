@@ -49,7 +49,7 @@ export function checkLinkText(href: string, settings: LinkRangeSettings): Parsed
 	return { note, h1, h2, altText }
 }
 
-export function checkLink(linkHTML: HTMLElement, settings: LinkRangeSettings, hrefField = "data-href"): ParsedLink | null {
+export function checkLink(linkHTML: HTMLElement, settings: LinkRangeSettings, isEmbed=false, hrefField = "data-href"): ParsedLink | null {
 	const href = linkHTML.getAttribute(hrefField);
 
 	if (href == null) {
@@ -65,7 +65,8 @@ export function checkLink(linkHTML: HTMLElement, settings: LinkRangeSettings, hr
 		if (alt != null && !alt.contains(res.note)) {
 			res.altText = alt
 		}
-		else if (!linkHTML.innerText.contains(res.note)) {
+
+		if (!isEmbed && !linkHTML.innerText.contains(res.note)) {
 			res.altText = linkHTML.innerText
 		}
 
