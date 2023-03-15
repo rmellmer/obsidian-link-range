@@ -1,9 +1,10 @@
-import { Component, MarkdownRenderer, TFile } from "obsidian";
+import { MarkdownRenderer, TFile } from "obsidian";
 import { LinkRangeSettings } from "./settings";
 import { checkLink } from "./utils";
 
 export async function replaceEmbed(embed: Node, settings: LinkRangeSettings, isMarkdownPost = false) {
 	let embedHtml = embed as HTMLElement
+
 	const res = checkLink(embedHtml, settings, true, "src");
 
 	if (res !== null) {
@@ -13,17 +14,26 @@ export async function replaceEmbed(embed: Node, settings: LinkRangeSettings, isM
 		).first()
 
 		if (foundNote) {
-			// empty children
-			embedHtml.replaceChildren("")
-			embedHtml.setText("")
+			embedHtml.childNodes.forEach(x => {
+				x.remove()
+			})
+
+			const linkRange = embedHtml.querySelectorAll("div.link-range-embed")
+
+			linkRange.forEach(x => {
+				x.remove()
+			})
 
 			if (isMarkdownPost) {
 				// prevent default embed functionality for markdown post processor
 				embedHtml.removeClasses(["internal-embed"])
+				// create a child div under embedHtml to place content inside
 				embedHtml = embedHtml.createDiv({
-					cls: ["internal-embed", "markdown-embed", "inline-embed", "is-loaded"]
+					cls: ["internal-embed", "markdown-embed", "inline-embed", "is-loaded", "link-range-embed"]
 				})
-			}	
+			}
+
+			embedHtml.setText("")
 
 			embedHtml.createEl("h2", {
 				text: res.altText
@@ -70,7 +80,11 @@ export async function replaceEmbed(embed: Node, settings: LinkRangeSettings, isM
 			let lines = fileContent.split("\n");
 			lines = lines.slice(res.h1Line, res.h2Line);
 
-			MarkdownRenderer.renderMarkdown(lines.join("\n"), embedHtml, "", new Component)
+			const contentDiv = embedHtml.createDiv({
+				cls: ["markdown-embed-content"]
+			})
+
+			MarkdownRenderer.renderMarkdown(lines.join("\n"), contentDiv, "", null)
 		}
 	}				
 }

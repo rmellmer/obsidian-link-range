@@ -24,6 +24,10 @@ export default class LinkRange extends Plugin {
 
 		// wait for layout to be ready
 		this.app.workspace.onLayoutReady(() => {
+			this.registerEditorExtension(ViewPlugin.define((v) => {
+				return new LinkRangeView(this.settings)
+			}));
+
 			const pagePreviewPlugin = this.app.internalPlugins.plugins["page-preview"];
 
 			console.log("LinkRange: Hooking into page-preview onHover calls")
@@ -66,10 +70,6 @@ export default class LinkRange extends Plugin {
 				pagePreviewPlugin.enable();
 			});
 		});
-
-		this.registerEditorExtension(ViewPlugin.define((v) => {
-			return new LinkRangeView(this.settings)
-		}));
 	}
 
 	onunload() {

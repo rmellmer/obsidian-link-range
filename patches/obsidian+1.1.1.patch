@@ -1,0 +1,13 @@
+diff --git a/node_modules/obsidian/obsidian.d.ts b/node_modules/obsidian/obsidian.d.ts
+index 0ce3319..031a922 100644
+--- a/node_modules/obsidian/obsidian.d.ts
++++ b/node_modules/obsidian/obsidian.d.ts
+@@ -2072,7 +2072,7 @@ export abstract class MarkdownRenderer extends MarkdownRenderChild implements Ma
+      * @param component - A parent component to manage the lifecycle of the rendered child components, if any
+      * @public
+      */
+-    static renderMarkdown(markdown: string, el: HTMLElement, sourcePath: string, component: Component): Promise<void>;
++    static renderMarkdown(markdown: string, el: HTMLElement, sourcePath: string, component: Component|null): Promise<void>;
+ }
+ 
+ /** @public */

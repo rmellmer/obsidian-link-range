@@ -30,7 +30,7 @@ export class LinkRangeView implements PluginValue {
 			return;
 		}
 
-		if (update.docChanged || update.viewportChanged || this.decorations === Decoration.none) {
+		if (update.docChanged || update.viewportChanged || update.focusChanged ) {
 			this.decorations = this.buildDecorations(update.view);
 		}
 	}	
