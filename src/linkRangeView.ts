@@ -1,5 +1,5 @@
 import { EditorView, Decoration, DecorationSet, PluginValue, ViewUpdate } from "@codemirror/view";
-import { editorLivePreviewField } from "obsidian";
+import { App, editorLivePreviewField } from "obsidian";
 import { LinkRangeSettings } from "./settings";
 import { RangeSetBuilder } from "@codemirror/state";
 import { replaceEmbed } from "./embeds";
@@ -7,9 +7,11 @@ import { replaceEmbed } from "./embeds";
 export class LinkRangeView implements PluginValue {
 	decorations: DecorationSet = Decoration.none;
 	settings: LinkRangeSettings;
+	app: App;
 
-	constructor(settings: LinkRangeSettings) {
+	constructor(settings: LinkRangeSettings, app: App) {
 		this.settings = settings;
+		this.app = app;
 	}
 
 	buildDecorations(view: EditorView): DecorationSet {
@@ -17,7 +19,7 @@ export class LinkRangeView implements PluginValue {
 		const embeds = view.contentDOM.querySelectorAll("div.markdown-embed");
 
 		embeds.forEach(embed => {
-			replaceEmbed(embed, this.settings)
+			replaceEmbed(this.app, embed, this.settings)
 		})
 
 		return buffer.finish();
@@ -30,7 +32,7 @@ export class LinkRangeView implements PluginValue {
 			return;
 		}
 
-		if (update.docChanged || update.viewportChanged || update.focusChanged ) {
+		if ( update.docChanged || update.viewportChanged || update.focusChanged ) {
 			this.decorations = this.buildDecorations(update.view);
 		}
 	}	

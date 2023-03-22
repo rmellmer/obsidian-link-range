@@ -38,7 +38,7 @@ export class LinkRangeSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.headingSeparator = value;
 					await this.plugin.saveSettings();
-					postProcessorUpdate()
+					postProcessorUpdate(this.app)
 				}));
 
 		new Setting(containerEl)
@@ -50,7 +50,7 @@ export class LinkRangeSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.altFormat = value;
 					await this.plugin.saveSettings();
-					postProcessorUpdate()
+					postProcessorUpdate(this.app)
 				}));
 
 		new Setting(containerEl)
@@ -61,7 +61,7 @@ export class LinkRangeSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.endInclusive = value;
 					await this.plugin.saveSettings();
-					postProcessorUpdate()
+					postProcessorUpdate(this.app)
 				}));
 	}
 }

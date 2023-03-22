@@ -1,16 +1,16 @@
-import { MarkdownPostProcessorContext } from "obsidian";
+import { App, MarkdownPostProcessorContext } from "obsidian";
 import { replaceEmbed } from "./embeds";
 import { LinkRangeSettings } from "./settings";
 import { checkLink } from "./utils";
 
 
-export function linkRangePostProcessor(el: HTMLElement, ctx: MarkdownPostProcessorContext, settings: LinkRangeSettings): void {
+export function linkRangePostProcessor(app: App, el: HTMLElement, ctx: MarkdownPostProcessorContext, settings: LinkRangeSettings): void {
 	const links = el.querySelectorAll('a.internal-link');
 
 	// Handle links
 	links.forEach(link => { 
 		const htmlLink = link as HTMLElement
-		const res = checkLink(htmlLink, settings);
+		const res = checkLink(app, htmlLink, settings);
 
 		if (res !== null) {
 			if (res.altText) {
@@ -26,6 +26,6 @@ export function linkRangePostProcessor(el: HTMLElement, ctx: MarkdownPostProcess
 	const embeds = el.querySelectorAll('span.internal-embed');
 
 	embeds.forEach(embed => {
-		replaceEmbed(embed, settings, true)	
+		replaceEmbed(app, embed, settings, true)	
 	});
 }

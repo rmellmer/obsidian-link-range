@@ -1,4 +1,4 @@
-import { TFile } from "obsidian";
+import { App, TFile } from "obsidian";
 import { LinkRangeSettings } from "./settings";
 
 export interface ParsedLink {
@@ -49,7 +49,7 @@ export function checkLinkText(href: string, settings: LinkRangeSettings): Parsed
 	return { note, h1, h2, altText }
 }
 
-export function checkLink(linkHTML: HTMLElement, settings: LinkRangeSettings, isEmbed=false, hrefField = "data-href"): ParsedLink | null {
+export function checkLink(app :App, linkHTML: HTMLElement, settings: LinkRangeSettings, isEmbed=false, hrefField = "data-href"): ParsedLink | null {
 	const href = linkHTML.getAttribute(hrefField);
 
 	if (href == null) {
@@ -119,7 +119,7 @@ export function checkLink(linkHTML: HTMLElement, settings: LinkRangeSettings, is
 	return null;
 }
 
-export function postProcessorUpdate() {
+export function postProcessorUpdate(app: App) {
 	for (const leaf of app.workspace.getLeavesOfType('markdown')) {
 		// Actually of type MarkdownView, but casting to any because the TS types don't have previewMode.renderer or editor.cm... 
 		const view = leaf.view as any;

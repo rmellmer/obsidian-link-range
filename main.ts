@@ -19,13 +19,13 @@ export default class LinkRange extends Plugin {
 
 		// on page load, update hrefs to strip off second header to handle clickthrough, and add new range-href field
 		this.registerMarkdownPostProcessor((el, ctx) => {
-			linkRangePostProcessor(el, ctx, settings)
+			linkRangePostProcessor(this.app, el, ctx, settings)
 		});
 
 		// wait for layout to be ready
 		this.app.workspace.onLayoutReady(() => {
 			this.registerEditorExtension(ViewPlugin.define((v) => {
-				return new LinkRangeView(this.settings)
+				return new LinkRangeView(this.settings, this.app)
 			}));
 
 			const pagePreviewPlugin = this.app.internalPlugins.plugins["page-preview"];
@@ -49,7 +49,7 @@ export default class LinkRange extends Plugin {
 						...args: unknown[]
 					) {
 						// parse link using the added range-href field
-						const res = checkLink(targetEl, settings, false, "range-href")
+						const res = checkLink(this.app, targetEl, settings, false, "range-href")
 						if (res !== null) {
 							old.call(this, parent, targetEl, res.note, path, {scroll:res.h1Line}, ...args)
 						} else {
