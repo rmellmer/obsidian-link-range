@@ -63,7 +63,7 @@ export async function replaceEmbed(app: App, embed: Node, settings: LinkRangeSet
 				cls: ["markdown-embed-content"]
 			})
 
-			MarkdownRenderer.renderMarkdown(lines.join("\n"), contentDiv, "", null)
+			MarkdownRenderer.renderMarkdown(lines.join("\n"), contentDiv, "", null!)
 		}
 	}				
 }
