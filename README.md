@@ -1,5 +1,7 @@
 # Obsidian Link Range
 
+![Obsidian Link Range Logo](https://user-images.githubusercontent.com/23059902/225677761-c36b01a6-6194-4d83-a130-a1d7561b8359.png)
+
 This plugin brings wiki-link header range queries to Obsidian while retaining native backlink functionality. Supports standard wiki-links, hover preview, and embedded content wiki-links.
 
 ![demo](./docs/demo.gif)

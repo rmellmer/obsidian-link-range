@@ -1,11 +1,11 @@
-import { MarkdownRenderer, TFile } from "obsidian";
+import { App, MarkdownRenderer, setIcon, TFile } from "obsidian";
 import { LinkRangeSettings } from "./settings";
 import { checkLink } from "./utils";
 
-export async function replaceEmbed(embed: Node, settings: LinkRangeSettings, isMarkdownPost = false) {
+export async function replaceEmbed(app: App, embed: Node, settings: LinkRangeSettings, isMarkdownPost = false) {
 	let embedHtml = embed as HTMLElement
 
-	const res = checkLink(embedHtml, settings, true, "src");
+	const res = checkLink(app, embedHtml, settings, true, "src");
 
 	if (res !== null) {
 		const { vault } = app;
@@ -42,29 +42,8 @@ export async function replaceEmbed(embed: Node, settings: LinkRangeSettings, isM
 			const linkDiv = embedHtml.createDiv({
 				cls: ["markdown-embed-link"],
 			});
-			const svg = linkDiv.createSvg("svg", {
-				attr: {
-					width: "24",
-					height: "24",
-					viewBox: "0 0 24 24",
-					fill: "none",
-					stroke: "currentColor",
-					strokeWidth: "2"
-				},
-				cls: ["svg-icon", "lucide-link"]
-			})
 
-			// manually create link icon svg
-			svg.createSvg("path", {
-				attr: {
-					d: "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-				}
-			})
-			svg.createSvg("path", {
-				attr: {
-					d: "M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-				}
-			})
+			setIcon(linkDiv, 'link')
 
 			linkDiv.onClickEvent((ev: MouseEvent) => {
 				const leaf = app.workspace.getMostRecentLeaf();
