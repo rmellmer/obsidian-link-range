@@ -6,12 +6,16 @@ export interface LinkRangeSettings {
 	headingSeparator: string;
 	altFormat: string;
 	endInclusive: boolean;
+	headingVisual: string,
+	headingSeparatorVisual: string,
 }
 
 export const DEFAULT_SETTINGS: LinkRangeSettings = {
 	headingSeparator: '..',
 	altFormat: '$note:$h1-$h2',
-	endInclusive: true
+	endInclusive: true,
+	headingVisual: ':',
+	headingSeparatorVisual: '-',
 }
 
 export class LinkRangeSettingTab extends PluginSettingTab {
@@ -53,6 +57,30 @@ export class LinkRangeSettingTab extends PluginSettingTab {
 					postProcessorUpdate(this.app)
 				}));
 
+		new Setting(containerEl)
+			.setName('Heading visual override for live preview')
+			.setDesc('Defines the override for the heading (#) character for live preview mode.')
+			.addText(text => text
+				.setPlaceholder('Enter an override')
+				.setValue(this.plugin.settings.headingVisual)
+				.onChange(async (value) => {
+					this.plugin.settings.headingVisual = value;
+					await this.plugin.saveSettings();
+					postProcessorUpdate(this.app)
+				}));
+
+		new Setting(containerEl)
+			.setName('Heading separator visual override for live preview')
+			.setDesc('Defines the override for the heading (>, or whatever is defined) character for live preview mode.')
+			.addText(text => text
+				.setPlaceholder('Enter an override')
+				.setValue(this.plugin.settings.headingSeparatorVisual)
+				.onChange(async (value) => {
+					this.plugin.settings.headingSeparatorVisual = value;
+					await this.plugin.saveSettings();
+					postProcessorUpdate(this.app)
+				}));
+	
 		new Setting(containerEl)
 			.setName('End Inclusive')
 			.setDesc('Whether or not the end heading should be inclusive or exclusive')
