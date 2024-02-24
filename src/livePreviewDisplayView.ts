@@ -72,6 +72,8 @@ export function buildCMViewPlugin(app: App, settings: LinkRangeSettings) {
                     return false;
                 }
 
+                const defaultPattern = settings.getDefaultPattern();
+
                 for (let {from, to} of view.visibleRanges) {
 
                     syntaxTree(view.state).iterate({
@@ -105,14 +107,14 @@ export function buildCMViewPlugin(app: App, settings: LinkRangeSettings) {
                                             builder.add(node.from - 2, node.to + 2, attributeDeco);
 
                                             let overrideP2HWidget = Decoration.widget({
-                                                widget: new CharacterOverwriteWidget(settings.headingVisual),
+                                                widget: new CharacterOverwriteWidget(defaultPattern.headingVisual),
                                             });
                                             builder.add(indexOfHeaderMarker, indexOfHeaderMarker + 1, overrideP2HWidget);  
 
                                             const indexOfRangeMarker = linkText.indexOf(settings.headingSeparator) + node.from;
                                             if (indexOfRangeMarker >= node.from && indexOfRangeMarker <= node.to) {
                                                 let overrideH2HWidget = Decoration.widget({
-                                                    widget: new CharacterOverwriteWidget(settings.headingSeparatorVisual),
+                                                    widget: new CharacterOverwriteWidget(defaultPattern.headingSeparatorVisual),
                                                 });
                                                 builder.add(indexOfRangeMarker, indexOfRangeMarker + settings.headingSeparator.length, overrideH2HWidget);
                                             }

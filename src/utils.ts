@@ -1,5 +1,5 @@
 import { App, TFile } from "obsidian";
-import { LinkRangeSettings } from "./settings";
+import { LinkRangeSettings, Pattern } from "./settings";
 
 export interface ParsedLink {
 	note: string;
@@ -41,9 +41,15 @@ export function checkLinkText(href: string, settings: LinkRangeSettings): Parsed
 		altText = matches[3]
 	}
 	else {
-		altText = settings.altFormat.replace(NOTE_PLACEHOLDER, note)
-		altText = altText.replace(H1_PLACEHOLDER, h1)
-		altText = altText.replace(H2_PLACEHOLDER, h2)
+
+		const file = app.vault.getFiles().find((file) => file.basename === note);
+
+		let pattern = [...settings.patterns].reverse().find((pattern: Pattern) => file?.path.startsWith(pattern.path))
+		if (!pattern) {
+			pattern = settings.getDefaultPattern();
+		}
+
+		altText = `${note}${pattern.headingVisual}${h1}${pattern.headingSeparatorVisual}${h2}`
 	}
 
 	return { note, h1, h2, altText }
