@@ -26,11 +26,6 @@ export function checkLinkText(href: string, settings: LinkRangeSettings): Parsed
 	const header = matches[2];
 	const split = header.split(settings.headingSeparator);
 
-	// if there is no heading separator, no need to change the appearance.
-	if (split.length < 2) {
-		return null;
-	}
-
 	const note = matches[1];
 	const h1 = split[0];
 	const h2 = split[1];
@@ -42,7 +37,16 @@ export function checkLinkText(href: string, settings: LinkRangeSettings): Parsed
 	}
 	else {
 		let pattern = findPatternForFile(note, settings);
-		altText = `${note}${pattern.headingVisual}${h1}${pattern.headingSeparatorVisual}${h2}`
+
+		let headingVisual = pattern.headingVisual === '' ? '#' : pattern.headingVisual;
+		let headingSeparatorVisual = pattern.headingSeparatorVisual === '' ? settings.headingSeparator : pattern.headingSeparatorVisual;
+
+		if (h2 !== undefined) {
+			altText = `${note}${headingVisual}${h1}${headingSeparatorVisual}${h2}`
+		}
+		else {
+			altText = `${note}${headingVisual}${h1}`
+		}
 	}
 
 	return { note, h1, h2, altText }
