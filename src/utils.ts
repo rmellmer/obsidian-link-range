@@ -26,7 +26,7 @@ export function checkLinkText(href: string, settings: LinkRangeSettings): Parsed
 	const header = matches[2];
 	const split = header.split(settings.headingSeparator);
 
-	// our ranged link format is "#h1..h2"
+	// if there is no heading separator, no need to change the appearance.
 	if (split.length < 2) {
 		return null;
 	}
@@ -41,14 +41,7 @@ export function checkLinkText(href: string, settings: LinkRangeSettings): Parsed
 		altText = matches[3]
 	}
 	else {
-
-		const file = app.vault.getFiles().find((file) => file.basename === note);
-
-		let pattern = [...settings.patterns].reverse().find((pattern: Pattern) => file?.path.startsWith(pattern.path))
-		if (!pattern) {
-			pattern = settings.getDefaultPattern();
-		}
-
+		let pattern = findPatternForFile(note, settings);
 		altText = `${note}${pattern.headingVisual}${h1}${pattern.headingSeparatorVisual}${h2}`
 	}
 
@@ -135,4 +128,15 @@ export function postProcessorUpdate(app: App) {
 	}
 
 	app.workspace.updateOptions();
+}
+
+export function findPatternForFile(fileName: string, settings: LinkRangeSettings) : Pattern {
+	const file = app.vault.getFiles().find((file) => file.basename === fileName);
+
+	let pattern = [...settings.patterns].reverse().find((pattern: Pattern) => file?.path.startsWith(pattern.path))
+	if (!pattern) {
+		pattern = settings.getDefaultPattern();
+	}
+
+	return pattern;
 }
