@@ -3,6 +3,7 @@ import { Decoration, DecorationSet, EditorView, ViewPlugin, ViewUpdate, WidgetTy
 import { RangeSetBuilder } from "@codemirror/state";
 import { syntaxTree } from "@codemirror/language";
 import { LinkRangeSettings } from "./settings";
+import { findPatternForFile } from './utils';
 
 class CharacterOverwriteWidget extends WidgetType {
 
@@ -72,8 +73,6 @@ export function buildCMViewPlugin(app: App, settings: LinkRangeSettings) {
                     return false;
                 }
 
-                const defaultPattern = settings.getDefaultPattern();
-
                 for (let {from, to} of view.visibleRanges) {
 
                     syntaxTree(view.state).iterate({
@@ -96,27 +95,31 @@ export function buildCMViewPlugin(app: App, settings: LinkRangeSettings) {
                                 if (isLink && !isAlias && !isPipe || isMDUrl) {
                                     let linkText = view.state.doc.sliceString(node.from, node.to);
                                     
-                                    const indexOfHeaderMarker = linkText.indexOf('#') + node.from;
-                                    if (indexOfHeaderMarker >= node.from && indexOfHeaderMarker <= node.to) {
-
+                                    const indexOfHeaderMarker = linkText.indexOf('#');
+                                    const indexOfHeaderMarkerInDoc = indexOfHeaderMarker + node.from;
+                                    if (indexOfHeaderMarkerInDoc >= node.from && indexOfHeaderMarkerInDoc <= node.to) {
                                         if (!inLastPass(node.from - 2, location?.from)) {
                                         
-                                            let attributeDeco = Decoration.mark({
-                                                class: 'heading-range-live-link'
-                                            });
-                                            builder.add(node.from - 2, node.to + 2, attributeDeco);
-
-                                            let overrideP2HWidget = Decoration.widget({
-                                                widget: new CharacterOverwriteWidget(defaultPattern.headingVisual),
-                                            });
-                                            builder.add(indexOfHeaderMarker, indexOfHeaderMarker + 1, overrideP2HWidget);  
-
-                                            const indexOfRangeMarker = linkText.indexOf(settings.headingSeparator) + node.from;
-                                            if (indexOfRangeMarker >= node.from && indexOfRangeMarker <= node.to) {
-                                                let overrideH2HWidget = Decoration.widget({
-                                                    widget: new CharacterOverwriteWidget(defaultPattern.headingSeparatorVisual),
+                                            const fileName = linkText.substring(0, indexOfHeaderMarker);
+                                            const pattern = findPatternForFile(fileName, settings);                                            
+                                            
+                                            // Overrides the heading character ('#') to what is specified in settings
+                                            if (pattern.headingVisual !== '') {
+                                                let overrideP2HWidget = Decoration.widget({
+                                                    widget: new CharacterOverwriteWidget(pattern.headingVisual),
                                                 });
-                                                builder.add(indexOfRangeMarker, indexOfRangeMarker + settings.headingSeparator.length, overrideH2HWidget);
+                                                builder.add(indexOfHeaderMarkerInDoc, indexOfHeaderMarkerInDoc + 1, overrideP2HWidget);  
+                                            }
+
+                                            // Overrides the header separator character to what is specified in settings
+                                            if (pattern.headingSeparatorVisual !== '') {
+                                                const indexOfRangeMarker = linkText.indexOf(settings.headingSeparator) + node.from;
+                                                if (indexOfRangeMarker >= node.from && indexOfRangeMarker <= node.to) {
+                                                    let overrideH2HWidget = Decoration.widget({
+                                                        widget: new CharacterOverwriteWidget(pattern.headingSeparatorVisual),
+                                                    });
+                                                    builder.add(indexOfRangeMarker, indexOfRangeMarker + settings.headingSeparator.length, overrideH2HWidget);
+                                                }
                                             }
                                         }
 
