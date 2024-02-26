@@ -21,7 +21,8 @@
 		"obsidian": "latest",
 		"patch-package": "^6.5.1",
 		"tslib": "2.4.0",
-		"typescript": "4.7.4"
+		"typescript": "4.7.4",
+		"@codemirror/language": "6.10.1"
 	},
 	"dependencies": {
 		"@types/codemirror": "^5.60.7",

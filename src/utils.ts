@@ -1,5 +1,5 @@
 import { App, TFile } from "obsidian";
-import { LinkRangeSettings } from "./settings";
+import { LinkRangeSettings, Pattern } from "./settings";
 
 export interface ParsedLink {
 	note: string;
@@ -26,11 +26,6 @@ export function checkLinkText(href: string, settings: LinkRangeSettings): Parsed
 	const header = matches[2];
 	const split = header.split(settings.headingSeparator);
 
-	// our ranged link format is "#h1..h2"
-	if (split.length < 2) {
-		return null;
-	}
-
 	const note = matches[1];
 	const h1 = split[0];
 	const h2 = split[1];
@@ -41,9 +36,17 @@ export function checkLinkText(href: string, settings: LinkRangeSettings): Parsed
 		altText = matches[3]
 	}
 	else {
-		altText = settings.altFormat.replace(NOTE_PLACEHOLDER, note)
-		altText = altText.replace(H1_PLACEHOLDER, h1)
-		altText = altText.replace(H2_PLACEHOLDER, h2)
+		let pattern = findPatternForFile(note, settings);
+
+		let headingVisual = pattern.headingVisual === '' ? '#' : pattern.headingVisual;
+		let headingSeparatorVisual = pattern.headingSeparatorVisual === '' ? settings.headingSeparator : pattern.headingSeparatorVisual;
+
+		if (h2 !== undefined) {
+			altText = `${note}${headingVisual}${h1}${headingSeparatorVisual}${h2}`
+		}
+		else {
+			altText = `${note}${headingVisual}${h1}`
+		}
 	}
 
 	return { note, h1, h2, altText }
@@ -129,4 +132,15 @@ export function postProcessorUpdate(app: App) {
 	}
 
 	app.workspace.updateOptions();
+}
+
+export function findPatternForFile(fileName: string, settings: LinkRangeSettings) : Pattern {
+	const file = app.vault.getFiles().find((file) => file.basename === fileName);
+
+	let pattern = [...settings.patterns].reverse().find((pattern: Pattern) => file?.path.startsWith(pattern.path))
+	if (!pattern) {
+		pattern = settings.getDefaultPattern();
+	}
+
+	return pattern;
 }

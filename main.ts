@@ -5,6 +5,8 @@ import { DEFAULT_SETTINGS, LinkRangeSettings, LinkRangeSettingTab } from 'src/se
 import { linkRangePostProcessor } from 'src/markdownPostProcessor';
 import { checkLink } from 'src/utils';
 import { LinkRangeView } from 'src/linkRangeView';
+import { buildCMViewPlugin } from 'src/livePreviewDisplayView';
+import { Prec } from "@codemirror/state";
 
 export default class LinkRange extends Plugin {
 	settings: LinkRangeSettings;
@@ -27,6 +29,9 @@ export default class LinkRange extends Plugin {
 			this.registerEditorExtension(ViewPlugin.define((v) => {
 				return new LinkRangeView(this.settings, this.app)
 			}));
+
+			const ext = Prec.lowest(buildCMViewPlugin(this.app, this.settings));
+			this.registerEditorExtension(ext);
 
 			const pagePreviewPlugin = this.app.internalPlugins.plugins["page-preview"];
 
