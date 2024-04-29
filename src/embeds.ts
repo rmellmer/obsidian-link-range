@@ -7,7 +7,8 @@ export async function replaceEmbed(app: App, embed: Node, settings: LinkRangeSet
 
 	const res = checkLink(app, embedHtml, settings, true, "src");
 
-	if (res !== null) {
+	const isLinkRange = res !== null && res.h2 !== undefined;
+	if (isLinkRange) {
 		const { vault } = app;
 		const foundNote : TFile | undefined = app.vault.getMarkdownFiles().filter(
 			x => x.basename == res.note
