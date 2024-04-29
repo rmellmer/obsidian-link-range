@@ -69,8 +69,8 @@ export class LinkRangeSettingTab extends PluginSettingTab {
 				}));
 	
 		new Setting(this.containerEl)
-			.setName("Add New")
-			.setDesc("Add new pattern to match files in a directory. The first value will change the visual for the heading in a link. The second value will change the visual for separator. The third specifies the folder in which the files must be to match.")
+			.setName("Add a New Visual Pattern")
+			.setDesc("Add new pattern to match files in a directory. The first value will change the visual for the heading in a link. The second value will change the visual for separator. The third specifies the folder in which the files must be to match. The first match, starting bottom up, will be applied. Therefore, the first is the default pattern.")
 			.addButton((button: ButtonComponent) => {
 				button
 					.setTooltip("Add new pattern to match files in a directory.")
