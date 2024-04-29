@@ -4,7 +4,7 @@ import { LinkRangeSettings } from "./settings";
 import { RangeSetBuilder } from "@codemirror/state";
 import { replaceEmbed } from "./embeds";
 
-export class LinkRangeView implements PluginValue {
+export class LifePreviewEmbedReplacer implements PluginValue {
 	decorations: DecorationSet = Decoration.none;
 	settings: LinkRangeSettings;
 	app: App;
