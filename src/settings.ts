@@ -11,6 +11,8 @@ export interface Pattern {
 export interface LinkRangeSettings {
 	headingSeparator: string;
 	endInclusive: boolean;
+	altFormat: string; // This is for backwards compatibility
+	settingsVersion: string;
 	patterns: [Pattern]
 	getDefaultPattern() : Pattern
 }
@@ -18,6 +20,8 @@ export interface LinkRangeSettings {
 export const DEFAULT_SETTINGS: LinkRangeSettings = {
 	headingSeparator: '..',
 	endInclusive: true,
+	altFormat: '',
+	settingsVersion: 'v2',
 	patterns: [{ headingVisual: '..', headingSeparatorVisual: '-', path: '/' }],
 
 	getDefaultPattern() {
@@ -36,6 +40,33 @@ export class LinkRangeSettingTab extends PluginSettingTab {
 	constructor(app: App, plugin: LinkRange) {
 		super(app, plugin);
 		this.plugin = plugin;
+		this.migrateOldSettings();
+	}
+
+	migrateOldSettings() {
+		const stgs = this.plugin.settings;
+
+		const hasV1Settings = stgs.altFormat != undefined && stgs.altFormat.length > 0;
+		if (hasV1Settings) {	
+
+			// default altFormat string: `$note:$h1-$h2`
+			const altFormat = stgs.altFormat;
+			const indexOfNote = altFormat.indexOf('$note');
+			const indexOfH1 = altFormat.indexOf('$h1');
+			const indexOfH2 = altFormat.indexOf('$h2');
+
+			const formatIsValid = indexOfNote === 0 && indexOfH1 !== -1 && indexOfH2 !== -2;
+			
+			if (formatIsValid) {
+				const firstValue = altFormat.substring('$note'.length, indexOfH1);
+				const secondValue = altFormat.substring(indexOfH1 + '$h1'.length, indexOfH2);
+
+				stgs.patterns = [{ headingVisual: firstValue, headingSeparatorVisual: secondValue, path: '' }]
+			}
+
+			stgs.altFormat = '';
+			this.plugin.saveSettings();
+		}
 	}
 
 	display(): void {
@@ -107,8 +138,9 @@ export class LinkRangeSettingTab extends PluginSettingTab {
 							postProcessorUpdate(this.app)
 						}))
 					.addText(text => text
-						.setPlaceholder('Enter a path')
+						.setPlaceholder(index === 0 ? '(global)' : 'Enter a path')
 						.setValue(pattern.path)
+						.setDisabled(index === 0)
 						.onChange(async (value) => {
 							pattern.path = value;
 							await this.plugin.saveSettings();
