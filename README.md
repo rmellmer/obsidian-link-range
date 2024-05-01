@@ -2,9 +2,9 @@
 
 ![Obsidian Link Range Logo](https://user-images.githubusercontent.com/23059902/225677761-c36b01a6-6194-4d83-a130-a1d7561b8359.png)
 
-This plugin brings wiki-link header range queries to Obsidian while retaining native backlink functionality. Supports standard wiki-links, hover preview, and embedded content wiki-links.
+This plugin brings wiki-link header range queries to Obsidian while retaining native backlink functionality. Supports standard wiki-links or other user-defined patterns, hover preview, and embedded content wiki-links.
 
-![demo](./docs/demo.gif)
+![demo](./docs/demo-2.gif)
 
 ## Usage
 To use, simply use the same wiki-link syntax you're used to in obsidian, but instead of specifying a single header, you can specify a header range separated by a separator string.
@@ -13,9 +13,16 @@ For example, if I wanted a link to headers "Ingredients" through "Directions" in
 
 `[[Recipe#Ingredients..Directions]]`
 
-## Settings
-| Setting           | Description  | Default Value | 
-| ------------------------------------------- | ------ | ------ |
-| Heading Separator   | Defines the separator to be used to define a link heading range. I.e. this is the ".." in example: `[[Note 1#h1..h2]]`   | `..`     |
-| Alt Text Format | The alternate text format that gest shown when in read mode. Use $note for the note name placeholder, and $h1/$h2 for the header placeholders. | `$note:$h1-$h2` |
-| End Inclusive    | When turned on, the second header and the content following it (through the next header in the note) is shown.   | true   |
+## Basic Settings
+
+The default settings give you the functionality indicated above.
+
+![default settings](./docs/default-settings.png)
+
+## Advanced Settings Choices
+
+If you prefer a different heading separator than the Wikilink syntax, you may change it.
+
+Some will want to change the visual style of the heading separators. The 
+
+![advanced settings](./docs/advanced-settings.png)
