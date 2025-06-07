@@ -32,10 +32,10 @@ export async function replaceEmbed(app: App, embed: Node, settings: LinkRangeSet
 
 		embedHtml.setText("")
 
-    embedHtml.createEl("div", {
-      cls: ["embed-title", "markdown-embed-title"],
-      text: res.altText
-    });
+		embedHtml.createEl("div", {
+			cls: ["embed-title", "markdown-embed-title"],
+			text: res.altText
+		});
 
 		const linkDiv = embedHtml.createDiv({
 			cls: ["markdown-embed-link"],
